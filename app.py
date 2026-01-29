@@ -1,12 +1,12 @@
+import gradio as gr
 import sys
 import os
-from fastapi import FastAPI, Query
 from dotenv import load_dotenv
 
-# Load environment variables from debate/.env
-load_dotenv(os.path.join(os.path.dirname(__file__), "debate", ".env"))
+# Load environment variables
+load_dotenv()
 
-# Fix sys.path so that "debate" is importable as a package
+# Fix sys.path for debate package
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEBATE_SRC = os.path.join(BASE_DIR, "debate", "src")
 if DEBATE_SRC not in sys.path:
@@ -14,40 +14,68 @@ if DEBATE_SRC not in sys.path:
 
 from debate.crew import Debate
 
-app = FastAPI()
-
-@app.get("/debate")
-def debate(topic: str = Query("AI ethics", description="Debate topic")):
+def run_debate(topic):
+    if not topic.strip():
+        return "Please enter a debate topic."
+    
     try:
         inputs = {"motion": topic}
         result = Debate().crew().kickoff(inputs=inputs)
-        return {"topic": topic, "result": result.raw}
+        return result.raw
     except Exception as e:
-        return {"error": f"An error occurred: {str(e)}", "topic": topic}
+        return f"Error: {str(e)}"
 
-# To test your FastAPI app:
-#
-# 1. **Start the server**
-#    In your project root, run:
-#    ```bash
-#    uvicorn app:app --host 0.0.0.0 --port 8000
-#    ```
-#
-# 2. **Open your browser**
-#    Go to:
-#    [http://localhost:8000/debate?topic=AI%20ethics](http://localhost:8000/debate?topic=AI%20ethics)
-#    You should see a JSON response with the debate result.
-#
-# 3. **Try with curl**
-#    ```bash
-#    curl "http://localhost:8000/debate?topic=Should%20AI%20replace%20human%20teachers"
-#    ```
-#
-# 4. **Interactive docs**
-#    Visit [http://localhost:8000/docs](http://localhost:8000/docs) for Swagger UI and test the endpoint interactively.
-#
-# If you want to demo it publicly, use ngrok:
-# ```bash
-# ngrok http 8000
-# ```
-# and use the public URL provided by ngrok.
+# Create interface
+with gr.Blocks(title="AI Debate System", theme=gr.themes.Soft()) as demo:
+    gr.Markdown("""
+    # 🤖 AI Debate System
+    
+    **Multi-agent AI system using CrewAI that generates structured debates on any topic.**
+    
+    Enter a debate topic and watch AI agents present arguments from both sides!
+    """)
+    
+    topic_input = gr.Textbox(
+        label="Debate Topic",
+        placeholder="Enter your debate topic here...",
+        value="Should AI replace human teachers?",
+        lines=2
+    )
+    
+    submit_btn = gr.Button("🎯 Start Debate", variant="primary")
+    
+    output = gr.Textbox(
+        label="Debate Results",
+        lines=12,
+        show_copy_button=True,
+        placeholder="Debate results will appear here..."
+    )
+    
+    submit_btn.click(
+        fn=run_debate,
+        inputs=topic_input,
+        outputs=output,
+        show_progress=True
+    )
+    
+    gr.Examples(
+        examples=[
+            ["Should AI replace human teachers?"],
+            ["Is remote work better than office work?"],
+            ["Should social media be regulated?"],
+            ["Is nuclear energy the future?"]
+        ],
+        inputs=topic_input,
+        outputs=output,
+        fn=run_debate
+    )
+    
+    gr.Markdown("""
+    ---
+    ### 🔧 Tech Stack: Python • CrewAI • Gradio • LLMs • Multi-Agent Systems
+    
+    [View Source Code](https://github.com/Divya-256/AI_Debate_System)
+    """)
+
+if __name__ == "__main__":
+    demo.launch()
