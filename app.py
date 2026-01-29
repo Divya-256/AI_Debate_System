@@ -26,7 +26,7 @@ def run_debate(topic):
         return f"Error: {str(e)}"
 
 # Create interface
-with gr.Blocks(title="AI Debate System", theme=gr.themes.Soft()) as demo:
+with gr.Blocks(title="AI Debate System") as demo:
     gr.Markdown("""
     # 🤖 AI Debate System
     
@@ -47,15 +47,13 @@ with gr.Blocks(title="AI Debate System", theme=gr.themes.Soft()) as demo:
     output = gr.Textbox(
         label="Debate Results",
         lines=12,
-        show_copy_button=True,
         placeholder="Debate results will appear here..."
     )
     
     submit_btn.click(
         fn=run_debate,
         inputs=topic_input,
-        outputs=output,
-        show_progress=True
+        outputs=output
     )
     
     gr.Examples(
@@ -78,4 +76,4 @@ with gr.Blocks(title="AI Debate System", theme=gr.themes.Soft()) as demo:
     """)
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(theme=gr.themes.Soft())
