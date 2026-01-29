@@ -1,3 +1,14 @@
+---
+title: AI Debate System
+emoji: 🧠⚖️
+colorFrom: purple
+colorTo: indigo
+sdk: gradio
+sdk_version: "6.5.0"
+app_file: app.py
+pinned: false
+---
+
 # AI Debate System
 
 An AI debate system built using **Crew AI** and multiple LLMs. Users input a topic, and the system generates structured arguments and counter-arguments using AI agents.
