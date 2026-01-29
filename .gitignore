@@ -1,0 +1,5 @@
+.venv/
+debate/.venv/
+__pycache__/
+.env
+*.pyc
