@@ -1,5 +1,6 @@
 propose:
   description: >
+    You are in favor of the motion: {motion}. Come up with a clear argument in favor of the motion. Be very convincing.
   expected_output: >
     Your clear argument in favor of the motion, in a concise manner.
   agent: debater
